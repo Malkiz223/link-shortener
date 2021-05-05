@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    <form action="" method="post">
+        <p>
+	    <label for="long_link">Введи свою длинную ссылку:</label>
+	    <input type="text" name="long_link">
+	</p>
+	<p>
+	    <input type="submit">
+	</p>
+    </form>
+
+</body>
+</html>
