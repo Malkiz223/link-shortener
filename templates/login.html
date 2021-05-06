@@ -10,11 +10,14 @@
     {% if message %}
         <p>{{ message }}</p>
     {% endif %}
+    {% if short_url %}
+        <p>{{ short_url }}</p>
+    {% endif %}
 
     <form action="" method="post">
         <p>
-	    <label for="long_link">Введи свою длинную ссылку:</label>
-	    <input type="text" name="long_link">
+	    <label for="long_url">Введи свою длинную ссылку:</label>
+	    <input type="text" name="long_url">
 	</p>
 	<p>
 	    <input type="submit">
