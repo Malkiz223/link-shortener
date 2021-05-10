@@ -28,7 +28,10 @@ def get_combination():
 def add_combination_to_urls_db(long_url: str) -> str:
     conn = sqlite3.connect('databases/' + settings.DB_URLS_NAME)
     cursor = conn.cursor()
-    url = make_correct_url(long_url)
+    if type(long_url) == str:
+        url = make_correct_url(long_url)
+    else:
+        raise long_url is None
     combination = get_combination()
     cursor.execute("""INSERT INTO urls (long_url, short_combination)
     VALUES (?, ?)""", (url, combination, ))
@@ -36,7 +39,7 @@ def add_combination_to_urls_db(long_url: str) -> str:
     return f'{settings.DOMAIN_NAME}/{combination}'
 
 
-def make_correct_url(url: str) -> str:
+def make_correct_url(url: str) -> str or None:
     if url.startswith('http://') or url.startswith('https://'):
         return url
     return 'http://' + url

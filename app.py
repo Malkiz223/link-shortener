@@ -17,6 +17,8 @@ def login():
     short_url = ''
     if request.method == 'POST':
         long_url = request.form.get('long_url')  # запрос к данным формы
+        if not long_url:
+            return 'Пожалуйста, введите URL'
         short_url = long_to_short_url.make_a_short_url(long_url)
         return short_url
     return render_template('login.html', message=message, short_url=short_url)
