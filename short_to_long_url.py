@@ -1,9 +1,14 @@
 import sqlite3
-import settings
+
+from settings import DB_FOLDER, DB_URLS_NAME
 
 
 def original_url_from_short(short_url: str) -> str:
-    conn = sqlite3.connect(settings.DB_FOLDER + settings.DB_URLS_NAME)
+    """
+     Идёт в базу urls.db, ищем там короткую комбинацию. Если таковая имеется - возвращает длинную ссылку.
+     Если такой комбинации нет - возвращает None.
+    """
+    conn = sqlite3.connect(DB_FOLDER + DB_URLS_NAME)
     cursor = conn.cursor()
     cursor.execute("""SELECT long_url FROM urls
     WHERE short_combination = (?)""", (short_url,))
