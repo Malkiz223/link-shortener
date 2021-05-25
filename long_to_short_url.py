@@ -3,7 +3,7 @@ import settings
 
 
 def take_combination_from_db() -> tuple[int, str]:
-    conn = sqlite3.connect('databases/' + settings.DB_COMBINATIONS_NAME)
+    conn = sqlite3.connect(settings.DB_FOLDER + settings.DB_COMBINATIONS_NAME)
     cursor = conn.cursor()
     cursor.execute("""SELECT id, short_combination FROM combinations
     WHERE id = (SELECT MAX(id) FROM combinations)""")
@@ -12,7 +12,7 @@ def take_combination_from_db() -> tuple[int, str]:
 
 
 def delete_last_combination_from_db(last_combination_id: int) -> None:
-    conn = sqlite3.connect('databases/' + settings.DB_COMBINATIONS_NAME)
+    conn = sqlite3.connect(settings.DB_FOLDER + settings.DB_COMBINATIONS_NAME)
     cursor = conn.cursor()
     cursor.execute("""DELETE FROM combinations
     WHERE id = (?)""", (last_combination_id, ))
@@ -26,7 +26,7 @@ def get_combination():
 
 
 def add_combination_to_urls_db(long_url: str) -> str:
-    conn = sqlite3.connect('databases/' + settings.DB_URLS_NAME)
+    conn = sqlite3.connect(settings.DB_FOLDER + settings.DB_URLS_NAME)
     cursor = conn.cursor()
     if type(long_url) == str:
         url = make_correct_url(long_url)
