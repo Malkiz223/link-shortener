@@ -22,9 +22,10 @@ def index_post():
     ссылка отправляется в базу и возвращает короткую ссылку из базы.
     """
     # то, что прилетает от AJAX
-    long_url = request.form.get('long_url').strip()
+    long_url = request.form.get('long_url')
     if not long_url:
         return jsonify({'error': 'Ссылка не может быть пустой'})
+    long_url = long_url.strip()
 
     # имеет символ до точки и минимум два символа после точки
     has_dot_regexp = r'\w+[.]\w\w+'
