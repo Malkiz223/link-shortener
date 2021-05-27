@@ -2,8 +2,7 @@ import re
 
 from flask import Flask, render_template, request, redirect, jsonify
 
-import long_to_short_url
-import short_to_long_url
+import url_converter
 from settings import DOMAIN_NAME, HYPERTEXT_PROTOCOL
 
 app = Flask(__name__)
@@ -44,7 +43,7 @@ def index_post():
         return jsonify({'error': 'Нельзя сокращать ссылку на сам сайт'})
 
     # если все проверки выше пройдены - ссылка отправляется в базу, возвращая сокращённую ссылку
-    short_url_for_user = long_to_short_url.make_a_short_url(long_url)
+    short_url_for_user = url_converter.make_a_short_url(long_url)
     return jsonify({'message': HYPERTEXT_PROTOCOL + short_url_for_user})
 
 
@@ -54,7 +53,7 @@ def short_url(short_url_from_user):
     Функция идёт в базу и ищет там комбинацию символов, равной ссылке, которая пришла от пользователя.
     Если комбинация находится - возвращает ссылку, которая привязана к ней. В противном случае возвращает 404.
     """
-    long_url = short_to_long_url.original_url_from_short(short_url_from_user)
+    long_url = url_converter.original_url_from_short(short_url_from_user)
     if long_url:
         return redirect(long_url)
     return render_template('404.html'), 404
