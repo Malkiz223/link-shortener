@@ -6,7 +6,9 @@ from settings import DB_URLS_NAME
 def create_urls_database():
     """
     База, в которой хранятся ссылки пользователей и короткие комбинации, к которым они привязаны.
-    long_url - для ссылок пользователей, short_combinations - для коротких ссылок.
+    long_url - для ссылок пользователей.
+    short_combinations - для коротких ссылок.
+    creation_time - для автоматической чистки старых ссылок, дабы снизить коллизии.
     """
     connect = sqlite3.connect(DB_URLS_NAME)
     cursor = connect.cursor()
@@ -20,5 +22,4 @@ def create_urls_database():
 
 
 if __name__ == '__main__':
-    create_combinations_database()
     create_urls_database()
