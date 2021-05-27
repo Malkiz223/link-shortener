@@ -13,8 +13,10 @@ def create_urls_database():
     cursor.execute(
         """CREATE TABLE IF NOT EXISTS urls (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
-           long_url VARCHAR(2000),
-           short_combination VARCHAR(5))""")
+           long_url VARCHAR(2000) NOT NULL,
+           short_combination VARCHAR(7) UNIQUE NOT NULL,
+           creation_time INTEGER(10) NOT NULL)
+           """)
 
 
 if __name__ == '__main__':
