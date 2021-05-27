@@ -5,8 +5,8 @@ from settings import DB_FOLDER, DB_URLS_NAME
 
 def original_url_from_short(short_url: str) -> str:
     """
-     Идёт в базу urls.db, ищем там короткую комбинацию. Если таковая имеется - возвращает длинную ссылку.
-     Если такой комбинации нет - возвращает None.
+    Идёт в базу urls.db, ищем там короткую комбинацию. Если таковая имеется - возвращает длинную ссылку.
+    Если такой комбинации нет - возвращает None.
     """
     conn = sqlite3.connect(DB_FOLDER + DB_URLS_NAME)
     cursor = conn.cursor()
