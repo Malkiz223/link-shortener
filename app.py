@@ -1,9 +1,10 @@
 import re
 
 from flask import Flask, render_template, request, redirect, jsonify
+
 import long_to_short_url
-import settings
 import short_to_long_url
+from settings import DOMAIN_NAME, HYPERTEXT_PROTOCOL
 
 app = Flask(__name__)
 
@@ -37,14 +38,14 @@ def index_post():
         return jsonify({'error': 'Некорректная ссылка'})
 
     # имеет ссылку для сокращения на самого себя
-    has_own_url = re.match(rf'{settings.DOMAIN_NAME}', long_url.lower()) or re.match(
-        rf'{settings.HYPERTEXT_PROTOCOL + settings.DOMAIN_NAME}', long_url.lower())
+    has_own_url = re.match(rf'{DOMAIN_NAME}', long_url.lower()) or re.match(
+        rf'{HYPERTEXT_PROTOCOL + DOMAIN_NAME}', long_url.lower())
     if has_own_url:
         return jsonify({'error': 'Нельзя сокращать ссылку на сам сайт'})
 
     # если все проверки выше пройдены - ссылка отправляется в базу, возвращая сокращённую ссылку
     short_url_for_user = long_to_short_url.make_a_short_url(long_url)
-    return jsonify({'message': settings.HYPERTEXT_PROTOCOL + short_url_for_user})
+    return jsonify({'message': HYPERTEXT_PROTOCOL + short_url_for_user})
 
 
 @app.route('/<short_url_from_user>')
