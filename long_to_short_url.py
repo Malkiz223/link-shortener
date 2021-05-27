@@ -46,7 +46,11 @@ def add_combination_to_urls_db(long_url: str) -> str:
 
 
 def make_correct_url(url: str) -> str or None:
-    if url.startswith('http://') or url.startswith('https://'):
+    """
+    Если пользователь добавляет ссылку на протокол, отличный от HTTP, то в базу не будет добавлено http://
+    Если пользователь не указал протокол совсем, то добавляется http://
+    """
+    if '://' in url[:10]:
         return url
     return 'http://' + url
 
