@@ -1,19 +1,6 @@
 import sqlite3
 
-from settings import DB_COMBINATIONS_NAME, DB_URLS_NAME
-
-
-def create_combinations_database():
-    """
-    Создаём базу для хранения комбинаций коротких ссылок.
-    id используется для доступа удобного к нижней комбинации.
-    """
-    connect = sqlite3.connect(DB_COMBINATIONS_NAME)
-    cursor = connect.cursor()
-    cursor.execute(
-        """CREATE TABLE IF NOT EXISTS combinations (
-           id INTEGER PRIMARY KEY AUTOINCREMENT,
-           short_combination VARCHAR(5))""")
+from settings import DB_URLS_NAME
 
 
 def create_urls_database():
