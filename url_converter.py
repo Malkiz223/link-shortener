@@ -1,10 +1,27 @@
 import contextlib
 import sqlite3
 import time
+from functools import wraps
 from random import choice
 from string import ascii_letters, digits
 
 from settings import DB_FOLDER, DB_URLS_NAME, DOMAIN_NAME
+
+
+def connect_db(func):
+    """
+    Декоратор коннекта к базе.
+    Разрывает соединение с базой после выполнения внутренней функции.
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        with contextlib.closing(sqlite3.connect(DB_FOLDER + DB_URLS_NAME)) as conn:
+            with conn:
+                with contextlib.closing(conn.cursor()) as cursor:
+                    return func(cursor, *args, **kwargs)
+
+    return wrapper
 
 
 def create_combination(count_characters=5) -> str:
@@ -26,33 +43,29 @@ def make_correct_url(long_url: str) -> str or None:
     return 'http://' + long_url
 
 
-def convert_to_short_url(long_url: str) -> str:
+@connect_db
+def convert_to_short_url(cursor, long_url: str) -> str:
     """
     Циклично генерируем комбинацию до тех пор, в базе её не окажется.
     Если комбинация в базе есть - cursor.rowcount вернёт 0.
     Если успешно вставил - вернёт количество вставленных строк.
     """
-    with contextlib.closing(sqlite3.connect(DB_FOLDER + DB_URLS_NAME)) as conn:
-        with conn:
-            with contextlib.closing(conn.cursor()) as cursor:
-                long_url = make_correct_url(long_url)
-                while cursor.rowcount < 1:
-                    combination = create_combination()
-                    cursor.execute("""INSERT OR IGNORE INTO urls (long_url, short_combination, creation_time)
-                    VALUES (?, ?, ?)""", (long_url, combination, int(time.time()),))
-                return f'{DOMAIN_NAME}/{combination}'
+    long_url = make_correct_url(long_url)
+    while cursor.rowcount < 1:
+        combination = create_combination()
+        cursor.execute("""INSERT OR IGNORE INTO urls (long_url, short_combination, creation_time)
+        VALUES (?, ?, ?)""", (long_url, combination, int(time.time()),))
+    return f'{DOMAIN_NAME}/{combination}'
 
 
-def convert_to_long_url(short_url: str) -> str:
+@connect_db
+def convert_to_long_url(cursor, short_url: str) -> str:
     """
     Идёт в базу, ищет там короткую комбинацию.
     Если она имеется - возвращает длинную ссылку.
     Если комбинации нет - возвращает None.
     """
-    with contextlib.closing(sqlite3.connect(DB_FOLDER + DB_URLS_NAME)) as conn:
-        with conn:
-            with contextlib.closing(conn.cursor()) as cursor:
-                cursor.execute("""SELECT long_url FROM urls
-                WHERE short_combination = (?)""", (short_url,))
-                original_url = cursor.fetchall()
-                return original_url[0][0] if original_url else None
+    cursor.execute("""SELECT long_url FROM urls
+    WHERE short_combination = (?)""", (short_url,))
+    original_url = cursor.fetchall()
+    return original_url[0][0] if original_url else None
