@@ -8,10 +8,30 @@ from settings import DB_FOLDER, DB_URLS_NAME, DOMAIN_NAME
 
 
 def create_combination(count_characters=5) -> str:
+    """
+    Возвращает случайную комбинацию вида 'Qa5Lz', длиной в count_characters.
+    """
     return ''.join(choice(ascii_letters + digits) for _ in range(count_characters))
 
 
-def add_combination_to_urls_db(long_url: str) -> str:
+def make_correct_url(long_url: str) -> str or None:
+    """
+    Дабы редирект происходил по правильным ссылкам, в базу кладётся их предполагаемый протокол.
+    Если юзер передаёт протокол самостоятельно - он и кладётся, в противном случае делаем http://
+    """
+    if type(long_url) != str:
+        raise long_url is None
+    if '://' in long_url[:10]:
+        return long_url
+    return 'http://' + long_url
+
+
+def convert_to_short_url(long_url: str) -> str:
+    """
+    Циклично генерируем комбинацию до тех пор, в базе её не окажется.
+    Если комбинация в базе есть - cursor.rowcount вернёт 0.
+    Если успешно вставил - вернёт количество вставленных строк.
+    """
     with contextlib.closing(sqlite3.connect(DB_FOLDER + DB_URLS_NAME)) as conn:
         with conn:
             with contextlib.closing(conn.cursor()) as cursor:
@@ -23,22 +43,11 @@ def add_combination_to_urls_db(long_url: str) -> str:
                 return f'{DOMAIN_NAME}/{combination}'
 
 
-def make_correct_url(long_url: str) -> str or None:
-    if type(long_url) != str:
-        raise long_url is None
-    if '://' in long_url[:10]:
-        return long_url
-    return 'http://' + long_url
-
-
-def make_a_short_url(long_url: str) -> str:
-    return add_combination_to_urls_db(long_url)
-
-
-def original_url_from_short(short_url: str) -> str:
+def convert_to_long_url(short_url: str) -> str:
     """
-    Идёт в базу, ищем там короткую комбинацию. Если таковая имеется - возвращает длинную ссылку.
-    Если такой комбинации нет - возвращает None.
+    Идёт в базу, ищет там короткую комбинацию.
+    Если она имеется - возвращает длинную ссылку.
+    Если комбинации нет - возвращает None.
     """
     with contextlib.closing(sqlite3.connect(DB_FOLDER + DB_URLS_NAME)) as conn:
         with conn:
