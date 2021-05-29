@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Сократи ссылку в два клика!{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="py-5 d-flex justify-content-center w-100">
+        <form action="/" method="post" class="text-center" style="max-width: 300px">
+            <div class="row">
+                <div class="form-group d-inline-block col-10">
+                    <input type="text" class="form-control shadow-none" id="url_input"
+                           placeholder="Сократите свою ссылку"
+                           name="long_url" autocomplete="off">
+                </div>
+                <div class="col-2" style="margin-left: -15px">
+                    <button type="submit" id="submit" class="btn btn-light">Сократить</button>
+                    <button type="submit" id="copy" class="btn btn-light" style="display: none">Копировать</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/ajax_link_shortener.js') }}"></script>
+{% endblock %}
